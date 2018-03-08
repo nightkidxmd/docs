@@ -24,8 +24,6 @@
 
 #### 2.3 Exchange
 
-> Work with exchanges.
->
 > Exchanges match and distribute messages across queues. Exchanges can be configured in the server or declared at runtime.
 
 `exchange命名规则:`
@@ -71,9 +69,9 @@
 
   如果队列名为空，会自动生成队列名(`?由于用的SpringBoot，不清楚这个是SpringBoot做的还是RabbitMQ做的`)
 
-  ![](./auto_gen_queue_name.png)
+  ![](./picture1.png)
 
-  ​
+
 
 `queue创建参数`
 
@@ -97,4 +95,30 @@
 
   - The server MUST ignore the auto-delete field if the queue already exists.
 
-  ​
+### 3.Producer,Exchange,Queue,Consumer关系
+
+`Producer,Consumer不是RabbitMQ给出的基本组件，这里用来分表示消息的生产者与消费者`
+
+`测试环境：SpringBoot`
+
+`Exchange:均为topic exchange，暂时不将不同类型exchange纳入讨论范围`
+
+![](./picture2.png)
+
+> 1. 消息发送需要指定Exchange
+>
+> 2. Exchange可以将消息转发至多个Queue也可以转发至多个Exchange:
+>
+>    `如Exchange A,Exchange B`
+>
+> 3. 同一个Queue可以绑定多个Exchange，即可以从多个Exchange收数据
+>
+>    `如Exchange A 和Exchange B的消息都可以发送到Queue A`
+>
+> 4. Queue中的一个消息，只能被一个Consumer消费，消费后，其他Consumer无法接收
+>
+>    `如消息A 进入 Queue A后，Consumer A/B/C 根据优先级消费该消息，若优先级相同，目测是随机`
+>
+> 5. 路由转发的同一个消息无论从什么路径到达Queue，此消息在目标Queue中只有一份
+>
+>    `如消息A 通过Exchange A，Exchange B转入Queue A，最终Queue A里只有一份`
