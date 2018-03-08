@@ -10,9 +10,11 @@
 
 `默认用户名：guest 密码：guest --- 此账号仅服务器本机可访问`
 
-### 2. 基础概念
+### 2. AMQP基础概念
 
-[官方文档v3.5.7](http://previous.rabbitmq.com/v3_5_7/amqp-0-9-1-reference.html)
+RabbitMQ主要实现的是AMQP，而MQTT等仅作为插件，所以得了解AMQP的规则
+
+[amqp0-9-1官方文档](http://previous.rabbitmq.com/v3_5_7/resources/specs/amqp0-9-1.pdf)
 
 #### 2.1 Connections
 
@@ -24,7 +26,7 @@
 
 #### 2.3 Exchange
 
-> Exchanges match and distribute messages across queues. Exchanges can be configured in the server or declared at runtime.
+> An exchange accepts messages from a producer application and routes these to message queues according to pre-arranged criteria. These criteria are called "bindings". Exchanges are matching and routing engines. That is, they inspect messages and using their binding tables, decide how to forward these messages to message queues or other exchanges. Exchanges never store messages.
 
 `exchange命名规则:`
 
@@ -101,8 +103,6 @@
 
 `测试环境：SpringBoot`
 
-`Exchange:均为topic exchange，暂时不将不同类型exchange纳入讨论范围`
-
 ![](./picture2.png)
 
 > 1. 消息发送需要指定Exchange
@@ -122,3 +122,42 @@
 > 5. 路由转发的同一个消息无论从什么路径到达Queue，此消息在目标Queue中只有一份
 >
 >    `如消息A 通过Exchange A，Exchange B转入Queue A，最终Queue A里只有一份`
+
+### 4. 四类Exchange
+
+#### 4.1 Topic
+
+> routing key支持模糊匹配。
+>
+> 通配符规则：
+>
+> '*'      任意单字符匹配
+>
+> '#'      任意字符零次或多次匹配
+>
+> *.stock.# 匹配 usd.stock eur.stok.db ，不匹配stock.nasdaq
+
+#### 4.2 Direct
+
+> routing key仅支持完全匹配
+
+#### 4.3 Fanout
+
+> 绑定到此Exchange的queue，绑定关系不支持参数，
+>
+> 数据将无条件传输到被绑定的queue
+
+#### 4.4 Headers
+
+>通过header参数表匹配来进行绑定，而不是routing key
+>
+>发送消息时不用指定exchange，而是消息带相应header参数，通过对header参数的匹配，自动找到对应的exchange, exchange再通过header参数匹配分发到对应的queue
+>
+>匹配规则设置
+>
+>x-match : all     表示参数全匹配
+>
+>x-match : any  表示只要有一个参数匹配即可
+>
+>
+
