@@ -45,6 +45,15 @@
 
 `Retained消息不属于Session状态，但是服务器需要保存该类消息直到Session结束`
 
+##### 2.2.2 Will
+
+连接时设置的Will消息，服务器先暂存，将在满足以下条件时触发发送动作：
+
+* An I/O error or network failure detected by the Server.
+* The Client fails to communicate within the Keep Alive time.
+* The Client closes the Network Connection `without first sending a DISCONNECT Packet`.
+* The Server closes the Network Connection because of a protocol error.
+
 #### 2.2 QoS
 
 ##### 2.2.1 Qos 0
@@ -134,5 +143,3 @@
 | FALSE        | TRUE           |
 | TRUE         | FALSE          |
 
-* Will 未实现    （连接断开未收到设置的Will消息）
-* Retain 未实现 （没看到持久消息）
