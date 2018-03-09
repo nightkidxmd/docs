@@ -139,7 +139,7 @@
 
 | Mqtt         | RabbitMQ(AMQP) |
 | ------------ | -------------- |
-| CleanSession | durable        |
-| FALSE        | TRUE           |
-| TRUE         | FALSE          |
+| CleanSession | auto-delete    |
+| FALSE        | FALSE          |
+| TRUE         | TRUE           |
 
