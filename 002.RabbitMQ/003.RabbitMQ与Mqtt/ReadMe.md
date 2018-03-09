@@ -128,3 +128,11 @@
 
 ### 3. RabbitMQ对Mqtt的协议适配
 
+| Mqtt         | RabbitMQ(AMQP) |
+| ------------ | -------------- |
+| CleanSession | durable        |
+| FALSE        | TRUE           |
+| TRUE         | FALSE          |
+
+* Will 未实现    （连接断开未收到设置的Will消息）
+* Retain 未实现 （没看到持久消息）
