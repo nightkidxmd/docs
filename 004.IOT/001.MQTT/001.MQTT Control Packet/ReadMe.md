@@ -112,9 +112,3 @@ Server -> Client:PUBCOMP
 Note left of Client: Discard
 ```
 
-
-
-
-
-
-

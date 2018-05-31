@@ -143,3 +143,6 @@
 | FALSE        | FALSE          |
 | TRUE         | TRUE           |
 
+### 4. RabbitMQ对Mqtt QoS的适配
+
+> **RabbitMQ does not support QoS2 subscriptions**. RabbitMQ automatically downgrades QoS 2 publishes and subscribes to QoS 1. Messages published as QoS 2 will be sent to subscribers as QoS 1. Subscriptions with QoS 2 will be downgraded to QoS1 during SUBSCRIBE request (SUBACK responses will contain the actually provided QoS level). 
