@@ -31,7 +31,7 @@
 | byte 1 | MCP type | MCP type | MCP type | MCP type | FLAGS | FLAGS | FLAGS | FLAGS |
 | byte 2 |          |          |          |          |       |       |       |       |
 
-#### 2.1.1 MCP Type
+##### 2.1.1 MCP Type
 
 > C:Client
 >
