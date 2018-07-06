@@ -22,8 +22,9 @@ npm install vue-material --save
 
 ### 2. 官网文档
 
-[vue](https://cn.vuejs.org)
+* [electron](https://electronjs.org/docs)                         跨平台桌面应用框架
+* [electron-vue](https://legacy.gitbook.com/book/simulatedgreg/electron-vue/details)                 支持VUE版本
+* [vue](https://cn.vuejs.org)                                 VUE官方网站
+* [vue-material](https://vuematerial.io)                 Material Design控件
+* [vuex](https://vuex.vuejs.org/zh/guide/)                                VUE版的Redux，项目自带
 
-[electron-vue](https://legacy.gitbook.com/book/simulatedgreg/electron-vue/details)
-
-[vue-material](https://vuematerial.io)
