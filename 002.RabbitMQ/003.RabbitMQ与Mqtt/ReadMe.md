@@ -146,3 +146,119 @@
 ### 4. RabbitMQ对Mqtt QoS的适配
 
 > **RabbitMQ does not support QoS2 subscriptions**. RabbitMQ automatically downgrades QoS 2 publishes and subscribes to QoS 1. Messages published as QoS 2 will be sent to subscribers as QoS 1. Subscriptions with QoS 2 will be downgraded to QoS1 during SUBSCRIBE request (SUBACK responses will contain the actually provided QoS level). 
+
+### 5. mqtt与amqp消息互通
+
+> RabbitMQ对于mqtt的数据传输是通过`amq.topic`exchange来进行交换的
+>
+> 以下例子均为本地默认端口
+
+#### 5.1 mqtt发送|amqp接收 
+
+* 发送:   topic可以是mqtt格式，也可以是amqp格式
+
+  ```python
+  import paho.mqtt.client as mqtt
+  
+  client = mqtt.Client("hello_mqtt_client")
+  client.username_pw_set("guest", "guest")
+  client.connect("localhost", 1883, 60)
+  client.publish("hello/mqtt", "hello mqtt", qos=0, retain=False)
+  ```
+
+  
+
+* 接收：
+
+  1. 队列创建随意
+  2. 将1创建的队列绑定到`amq.topic`exchange, `routingKey`为能接收到发送的topic即可，按照amqp规则配置
+
+  ```kotlin
+      @Bean
+      @Primary
+      open fun connectionFactory2() = CachingConnectionFactory().apply {
+          setAddresses("127.0.0.1:5672")
+          username = "guest"
+          setPassword("guest")
+          virtualHost = "/"
+          isPublisherConfirms = true
+      }    
+  
+      @Bean
+      open fun topic() = TopicExchange("amq.topic")
+      
+      @Bean
+      open fun queue() = Queue("lalalala")
+  
+      @Bean
+      open fun bindQueue() = BindingBuilder.bind(queue()).to(topic()).with("hello.mqtt")!!
+  ```
+
+  ```kotlin
+      @RabbitListener(queues = ["lalalala"])
+      fun processMessage2(buffer: ByteArray) {
+          println("接收到来自lalalala队列的消息:\n ${buffer.toString(Charset.defaultCharset())}")
+      }
+  ```
+
+#### 5.2 amqp发送|mqtt接收
+
+* 发送：
+
+  1. topic按照amqp格式
+  2. exchange指定为`amq.topic`
+
+  ```javascript
+        const amqp = require('amqplib/callback_api')
+        amqp.connect(
+            {
+              hostname: 'localhost',
+              port: '5672',
+              username: 'guest',
+              password: 'guest'  
+            }, (err, conn) => {
+          if (err !== null) {
+            reject(err)
+          } else {
+            connection.conn = conn
+            conn.createChannel(function (err, ch) {
+              if (err !== null) {
+                reject(err)
+              } else {
+                connection.ch = ch
+              }
+            })
+          }
+        })
+  ```
+
+  ```javascript
+  connection.ch.publish('amq.topic', 'hello.amqp', Buffer.from('hello amqp'))
+  ```
+
+  
+
+* 接收：订阅相关topic，既可以是mqtt格式，也可以是amqp格式
+
+  `以下例子用的ws，需要开启相关端口`
+
+  ```javascript
+  let client
+  function connect {
+      client = new Paho.MQTT.Client('localhost', Number(15675), "/ws", "hello.amqp.client/")
+      client.userName = 'guest'
+      client.password = 'guest'
+      client.onMessageArrived = onMessageArrived
+      client.connect({onSuccess: onConnect})
+  }
+  
+  function onConnect () {
+      client.subscribe('hello.amqp')
+  }
+  
+  function onMessageArrived (msg) {
+       console.log("onMessageArrived:" + msg.payloadString)
+  }
+  ```
+
+  
